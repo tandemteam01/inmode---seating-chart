@@ -74,9 +74,26 @@ button:hover { background: #f1d37a; }
 }
 
 .result {
-  margin-top: 30px;
+  margin-top: 40px;
   font-size: 26px;
   animation: fadeIn 0.4s ease;
+}
+
+.welcome-name {
+  font-size: 22px;
+  color: #ffffff;
+}
+
+.welcome-era {
+  font-size: 20px;
+  color: #d4af37;
+  margin-top: 5px;
+}
+
+.proceed-text {
+  font-size: 18px;
+  color: #ffffff;
+  margin-top: 25px;
 }
 
 .note {
@@ -86,7 +103,6 @@ button:hover { background: #f1d37a; }
   opacity: 0.85;
 }
 
-/* ซ่อนแผนผังไว้ก่อน */
 .map-container {
   margin-top: 45px;
   display: none;
@@ -151,11 +167,6 @@ fetch(url)
     }));
     document.getElementById("status").innerHTML =
       "Loaded " + guests.length + " guests";
-  })
-  .catch(error => {
-    document.getElementById("status").innerHTML =
-      "Unable to load guest list.";
-    console.log(error);
   });
 
 function hideMap() {
@@ -187,8 +198,9 @@ function searchSeat() {
     const safeName = escapeHtml(g.displayName);
 
     document.getElementById("result").innerHTML =
-      "<div style='font-size:18px; color:white; margin-bottom:6px;'>Welcome, " + safeName + ", to THE INMODE ERA</div>" +
-      "<div style='font-size:18px; color:white;'>Please proceed to</div>" +
+      "<div class='welcome-name'>Welcome, " + safeName + "</div>" +
+      "<div class='welcome-era'>to THE INMODE ERA</div>" +
+      "<div class='proceed-text'>Please proceed to</div>" +
       "<div style='font-size:44px; margin:10px 0;'>TABLE " + g.table + "</div>" +
       "<div style='font-size:18px; color:white;'>Your seat number is</div>" +
       "<div style='font-size:44px; margin-top:10px;'>" + g.seat + "</div>" +
@@ -197,11 +209,8 @@ function searchSeat() {
     showMap();
 
   } else if (results.length > 1) {
-    let list = "<div style='font-size:18px; color:white;'>Multiple results found. Please type your full name.</div><br>";
-    results.slice(0, 25).forEach(g => {
-      list += escapeHtml(g.displayName) + " — TABLE " + g.table + " SEAT " + g.seat + "<br>";
-    });
-    document.getElementById("result").innerHTML = list;
+    document.getElementById("result").innerHTML =
+      "<div style='color:white;'>Multiple results found. Please type your full name.</div>";
   } else {
     document.getElementById("result").innerHTML = "Name not found";
   }
