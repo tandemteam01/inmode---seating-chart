@@ -1,20 +1,81 @@
-function searchSeat() {
-    let name = document.getElementById("nameInput").value.toLowerCase().trim();
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Find Your Seat</title>
 
-    let results = guests.filter(g => g.name.includes(name));
-
-    if (results.length === 1) {
-        document.getElementById("result").innerHTML =
-        "Table: <b>" + results[0].table + "</b><br>Seat: <b>" + results[0].seat + "</b>";
-    } 
-    else if (results.length > 1) {
-        let list = "<p>Multiple results found:</p>";
-        results.forEach(g => {
-            list += g.name + " - Table " + g.table + " Seat " + g.seat + "<br>";
-        });
-        document.getElementById("result").innerHTML = list;
-    } 
-    else {
-        document.getElementById("result").innerHTML = "Name not found";
-    }
+<style>
+body {
+  font-family: Arial, sans-serif;
+  text-align: center;
+  padding: 60px;
 }
+input {
+  padding: 12px;
+  width: 250px;
+}
+button {
+  padding: 12px 20px;
+  margin-left: 10px;
+}
+.result {
+  margin-top: 30px;
+  font-size: 24px;
+}
+</style>
+
+</head>
+<body>
+
+<h2>Welcome</h2>
+<p>Enter your full name</p>
+
+<input type="text" id="nameInput" placeholder="Type your name">
+<button onclick="searchSeat()">Search</button>
+
+<div class="result" id="result"></div>
+
+<script>
+
+let guests = [];
+
+fetch('guests.csv')
+  .then(response => response.text())
+  .then(data => {
+    let rows = data.split("\n");
+    for (let i = 1; i < rows.length; i++) {
+      let cols = rows[i].split(",");
+      guests.push({
+        name: cols[0].trim().toLowerCase(),
+        table: cols[1],
+        seat: cols[2]
+      });
+    }
+  });
+
+function searchSeat() {
+  let name = document.getElementById("nameInput").value.toLowerCase().trim();
+  let results = guests.filter(g => g.name.includes(name));
+
+  if (results.length === 1) {
+    document.getElementById("result").innerHTML =
+      "Table: <b>" + results[0].table +
+      "</b><br>Seat: <b>" + results[0].seat + "</b>";
+  }
+  else if (results.length > 1) {
+    let list = "<p>Multiple results found:</p>";
+    results.forEach(g => {
+      list += g.name + " - Table " + g.table +
+              " Seat " + g.seat + "<br>";
+    });
+    document.getElementById("result").innerHTML = list;
+  }
+  else {
+    document.getElementById("result").innerHTML = "Name not found";
+  }
+}
+
+</script>
+
+</body>
+</html>
