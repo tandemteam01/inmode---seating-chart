@@ -45,9 +45,12 @@ button {
 
 let guests = [];
 
-// ❗ เปลี่ยนสองบรรทัดนี้ให้ถูก
+// ✅ ใส่ Google Sheet ID ให้แล้ว
 const sheetID = "1oDF4vOZ2ZgBPbXgIFSQo1jQpa08nP8S9eVw3duDoNJ0";
-const sheetName = "guests";
+
+// ⚠️ ชื่อแท็บต้องตรงกับใน Google Sheet
+// ถ้าแท็บชื่ออื่น ให้เปลี่ยนตรงนี้
+const sheetName = "Sheet1";
 
 const url = "https://opensheet.elk.sh/" + sheetID + "/" + sheetName;
 
@@ -59,7 +62,7 @@ fetch(url)
       table: row.table || "",
       seat: row.seat || ""
     }));
-    document.getElementById("status").innerHTML = 
+    document.getElementById("status").innerHTML =
       "Loaded " + guests.length + " guests";
   })
   .catch(error => {
@@ -78,7 +81,7 @@ function searchSeat() {
       "</b><br>Seat: <b>" + results[0].seat + "</b>";
   }
   else if (results.length > 1) {
-    let list = "<p>Multiple results found:</p>";
+    let list = "<p>Please select your name:</p>";
     results.forEach(g => {
       list += g.name + " - Table " + g.table +
               " Seat " + g.seat + "<br>";
@@ -89,6 +92,14 @@ function searchSeat() {
     document.getElementById("result").innerHTML = "Name not found";
   }
 }
+
+// ✅ กด Enter แล้วค้นหาได้เลย
+document.getElementById("nameInput").addEventListener("keydown", function(e) {
+  if (e.key === "Enter") {
+    e.preventDefault();
+    searchSeat();
+  }
+});
 
 </script>
 
