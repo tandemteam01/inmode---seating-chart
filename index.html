@@ -65,9 +65,7 @@ button {
   cursor: pointer;
 }
 
-button:hover {
-  background: #f1d37a;
-}
+button:hover { background: #f1d37a; }
 
 .status {
   margin-top: 14px;
@@ -82,19 +80,21 @@ button:hover {
 }
 
 .note {
-  margin-top: 25px;
+  margin-top: 20px;
   font-size: 16px;
   color: #ffffff;
   opacity: 0.85;
 }
 
+/* ซ่อนแผนผังไว้ก่อน */
 .map-container {
-  margin-top: 50px;
-  display: flex;
+  margin-top: 45px;
+  display: none;
   justify-content: center;
+  animation: fadeIn 0.4s ease;
 }
+.map-container.show { display: flex; }
 
-/* 🔥 สำคัญสำหรับ PNG โปร่งใส */
 .map-container img {
   width: 95%;
   max-width: 1100px;
@@ -125,8 +125,7 @@ button:hover {
 <div class="status" id="status">Loading guest list...</div>
 <div class="result" id="result"></div>
 
-<div class="map-container">
-  <!-- 🔥 ใช้ไฟล์ PNG -->
+<div class="map-container" id="mapContainer">
   <img src="seating-map.png" alt="Seating Map">
 </div>
 
@@ -145,7 +144,8 @@ fetch(url)
   .then(res => res.json())
   .then(data => {
     guests = data.map(row => ({
-      name: normalize(row.name),
+      displayName: (row.name || "").toString().trim(),
+      nameNormalized: normalize(row.name),
       table: (row.table || "").toString().trim().toUpperCase(),
       seat: (row.seat || "").toString().trim()
     }));
@@ -158,26 +158,51 @@ fetch(url)
     console.log(error);
   });
 
+function hideMap() {
+  document.getElementById("mapContainer").classList.remove("show");
+}
+
+function showMap() {
+  document.getElementById("mapContainer").classList.add("show");
+  document.getElementById("mapContainer").scrollIntoView({ behavior: "smooth", block: "start" });
+}
+
+function escapeHtml(str){
+  return (str || "")
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#039;");
+}
+
 function searchSeat() {
-  let name = normalize(document.getElementById("nameInput").value);
-  let results = guests.filter(g => g.name.includes(name));
+  let q = normalize(document.getElementById("nameInput").value);
+  hideMap();
+
+  let results = guests.filter(g => g.nameNormalized.includes(q));
 
   if (results.length === 1) {
+    const g = results[0];
+    const safeName = escapeHtml(g.displayName);
+
     document.getElementById("result").innerHTML =
+      "<div style='font-size:18px; color:white; margin-bottom:6px;'>Welcome, " + safeName + ", to THE INMODE ERA</div>" +
       "<div style='font-size:18px; color:white;'>Please proceed to</div>" +
-      "<div style='font-size:44px; margin:10px 0;'>TABLE " + results[0].table + "</div>" +
+      "<div style='font-size:44px; margin:10px 0;'>TABLE " + g.table + "</div>" +
       "<div style='font-size:18px; color:white;'>Your seat number is</div>" +
-      "<div style='font-size:44px; margin-top:10px;'>" + results[0].seat + "</div>" +
+      "<div style='font-size:44px; margin-top:10px;'>" + g.seat + "</div>" +
       "<div class='note'>Please refer to the seating map below to locate your table.</div>";
-  }
-  else if (results.length > 1) {
-    let list = "<div style='font-size:18px; color:white;'>Please select your name</div><br>";
-    results.forEach(g => {
-      list += g.name + " — TABLE " + g.table + " SEAT " + g.seat + "<br>";
+
+    showMap();
+
+  } else if (results.length > 1) {
+    let list = "<div style='font-size:18px; color:white;'>Multiple results found. Please type your full name.</div><br>";
+    results.slice(0, 25).forEach(g => {
+      list += escapeHtml(g.displayName) + " — TABLE " + g.table + " SEAT " + g.seat + "<br>";
     });
     document.getElementById("result").innerHTML = list;
-  }
-  else {
+  } else {
     document.getElementById("result").innerHTML = "Name not found";
   }
 }
@@ -187,6 +212,10 @@ document.getElementById("nameInput").addEventListener("keydown", function(e) {
     e.preventDefault();
     searchSeat();
   }
+});
+
+document.getElementById("nameInput").addEventListener("input", function() {
+  hideMap();
 });
 </script>
 
