@@ -1,56 +1,20 @@
-<!DOCTYPE html>
-<html>
-<head>
-<meta charset="UTF-8">
-<title>Find Your Seat</title>
-
-<style>
-body {
-  font-family: Arial, sans-serif;
-  text-align: center;
-  padding: 60px;
-}
-input {
-  padding: 12px;
-  width: 250px;
-}
-button {
-  padding: 12px 20px;
-  margin-left: 10px;
-}
-.result {
-  margin-top: 30px;
-  font-size: 24px;
-}
-</style>
-
-</head>
-<body>
-
-<h2>Welcome</h2>
-<p>Enter your full name</p>
-
-<input type="text" id="nameInput" placeholder="Type your name">
-<button onclick="searchSeat()">Search</button>
-
-<div class="result" id="result"></div>
-
 <script>
 
 let guests = [];
 
-fetch('guests.csv')
-  .then(response => response.text())
+const sheetID = "1oDF4vOZ2ZgBPbXgIFSQo1jQpa08nP8S9eVw3duDoNJ0";
+const sheetName = "Sheet1";  // เปลี่ยนถ้าชื่อชีตไม่ใช่ Sheet1
+
+const url = `https://opensheet.elk.sh/${sheetID}/${sheetName}`;
+
+fetch(url)
+  .then(response => response.json())
   .then(data => {
-    let rows = data.split("\n");
-    for (let i = 1; i < rows.length; i++) {
-      let cols = rows[i].split(",");
-      guests.push({
-        name: cols[0].trim().toLowerCase(),
-        table: cols[1],
-        seat: cols[2]
-      });
-    }
+    guests = data.map(row => ({
+      name: row.name.toLowerCase(),
+      table: row.table,
+      seat: row.seat
+    }));
   });
 
 function searchSeat() {
@@ -76,6 +40,3 @@ function searchSeat() {
 }
 
 </script>
-
-</body>
-</html>
