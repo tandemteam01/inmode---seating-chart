@@ -1,0 +1,20 @@
+function searchSeat() {
+    let name = document.getElementById("nameInput").value.toLowerCase().trim();
+
+    let results = guests.filter(g => g.name.includes(name));
+
+    if (results.length === 1) {
+        document.getElementById("result").innerHTML =
+        "Table: <b>" + results[0].table + "</b><br>Seat: <b>" + results[0].seat + "</b>";
+    } 
+    else if (results.length > 1) {
+        let list = "<p>Multiple results found:</p>";
+        results.forEach(g => {
+            list += g.name + " - Table " + g.table + " Seat " + g.seat + "<br>";
+        });
+        document.getElementById("result").innerHTML = list;
+    } 
+    else {
+        document.getElementById("result").innerHTML = "Name not found";
+    }
+}
