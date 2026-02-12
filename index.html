@@ -45,20 +45,26 @@ button {
 
 let guests = [];
 
-// ✅ ใส่ Google Sheet ID ให้แล้ว
+// ✅ Google Sheet ID ใส่ให้แล้ว
 const sheetID = "1oDF4vOZ2ZgBPbXgIFSQo1jQpa08nP8S9eVw3duDoNJ0";
 
-// ⚠️ ชื่อแท็บต้องตรงกับใน Google Sheet
-// ถ้าแท็บชื่ออื่น ให้เปลี่ยนตรงนี้
-const sheetName = "Sheet1";
+// ✅ ชื่อแท็บถูกต้อง
+const sheetName = "guests";
 
 const url = "https://opensheet.elk.sh/" + sheetID + "/" + sheetName;
+
+function normalize(str) {
+  return (str || "")
+    .toString()
+    .trim()
+    .toLowerCase();
+}
 
 fetch(url)
   .then(res => res.json())
   .then(data => {
     guests = data.map(row => ({
-      name: (row.name || "").toLowerCase(),
+      name: normalize(row.name),
       table: row.table || "",
       seat: row.seat || ""
     }));
@@ -72,7 +78,7 @@ fetch(url)
   });
 
 function searchSeat() {
-  let name = document.getElementById("nameInput").value.toLowerCase().trim();
+  let name = normalize(document.getElementById("nameInput").value);
   let results = guests.filter(g => g.name.includes(name));
 
   if (results.length === 1) {
