@@ -18,32 +18,30 @@ body {
 .small-title {
   font-size: 14px;
   letter-spacing: 2px;
-  color: #bfbfbf; /* Welcome to = เทาอ่อน */
+  color: #bfbfbf;
 }
 
 .big-title {
-  font-size: 44px;
+  font-size: 48px;
   font-weight: bold;
   margin: 10px 0 6px;
-  text-shadow: 0 0 20px rgba(212,175,55,0.6);
+  text-shadow: 0 0 25px rgba(212,175,55,0.7);
 }
 
 .subtitle {
   font-size: 16px;
-  margin-bottom: 28px;
-  color: #ffffff; /* The Dawn of Innovation = ขาว */
-  opacity: 0.95;
+  margin-bottom: 30px;
+  color: #ffffff;
 }
 
 .prompt {
   color: white;
-  margin: 0 0 14px;
+  margin-bottom: 15px;
 }
 
 .controls {
   display: flex;
   justify-content: center;
-  align-items: center;
   gap: 10px;
   flex-wrap: wrap;
 }
@@ -56,10 +54,7 @@ input {
   background: #111;
   color: #fff;
   font-size: 16px;
-  outline: none;
 }
-
-input::placeholder { color: #aaa; }
 
 button {
   padding: 14px 24px;
@@ -70,7 +65,9 @@ button {
   cursor: pointer;
 }
 
-button:hover { background: #f1d37a; }
+button:hover {
+  background: #f1d37a;
+}
 
 .status {
   margin-top: 14px;
@@ -79,38 +76,35 @@ button:hover { background: #f1d37a; }
 }
 
 .result {
-  margin-top: 22px;
-  font-size: 24px;
-  animation: fadeIn 0.5s ease;
+  margin-top: 30px;
+  font-size: 26px;
+  animation: fadeIn 0.4s ease;
 }
 
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(8px); }
-  to { opacity: 1; transform: translateY(0); }
+.note {
+  margin-top: 25px;
+  font-size: 16px;
+  color: #ffffff;
+  opacity: 0.85;
 }
 
-.map-wrap{
-  margin: 26px auto 0;
-  width: min(900px, 95vw);
+.map-container {
+  margin-top: 50px;
+  display: flex;
+  justify-content: center;
 }
 
-.map-box{
-  border-radius: 10px;
-  overflow: hidden;
-  box-shadow: 0 0 0 1px rgba(212,175,55,.15), 0 12px 40px rgba(0,0,0,.45);
-}
-
-.map-box img{
-  width: 100%;
+/* 🔥 สำคัญสำหรับ PNG โปร่งใส */
+.map-container img {
+  width: 95%;
+  max-width: 1100px;
   height: auto;
   display: block;
 }
 
-.note{
-  margin-top: 14px;
-  font-size: 16px;
-  color: #ffffff;
-  opacity: 0.9;
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 </style>
 </head>
@@ -131,12 +125,9 @@ button:hover { background: #f1d37a; }
 <div class="status" id="status">Loading guest list...</div>
 <div class="result" id="result"></div>
 
-<!-- ✅ แผนผังที่นั่ง -->
-<div class="map-wrap">
-  <div class="map-box">
-    <!-- อัปโหลดรูปเป็น seating-map.jpg -->
-    <img src="seating-map.jpg" alt="Seating Map">
-  </div>
+<div class="map-container">
+  <!-- 🔥 ใช้ไฟล์ PNG -->
+  <img src="seating-map.png" alt="Seating Map">
 </div>
 
 <script>
@@ -174,9 +165,9 @@ function searchSeat() {
   if (results.length === 1) {
     document.getElementById("result").innerHTML =
       "<div style='font-size:18px; color:white;'>Please proceed to</div>" +
-      "<div style='font-size:40px; margin:10px 0;'>TABLE " + results[0].table + "</div>" +
+      "<div style='font-size:44px; margin:10px 0;'>TABLE " + results[0].table + "</div>" +
       "<div style='font-size:18px; color:white;'>Your seat number is</div>" +
-      "<div style='font-size:40px; margin-top:10px;'>" + results[0].seat + "</div>" +
+      "<div style='font-size:44px; margin-top:10px;'>" + results[0].seat + "</div>" +
       "<div class='note'>Please refer to the seating map below to locate your table.</div>";
   }
   else if (results.length > 1) {
@@ -191,7 +182,6 @@ function searchSeat() {
   }
 }
 
-// Enter แล้วค้นหา
 document.getElementById("nameInput").addEventListener("keydown", function(e) {
   if (e.key === "Enter") {
     e.preventDefault();
