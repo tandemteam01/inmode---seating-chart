@@ -8,7 +8,7 @@
 <style>
 body {
   margin: 0;
-  font-family: 'Arial', sans-serif;
+  font-family: Arial, sans-serif;
   background: radial-gradient(circle at center, #1a1a1a 0%, #000000 100%);
   color: #d4af37;
   text-align: center;
@@ -22,10 +22,10 @@ body {
 }
 
 .big-title {
-  font-size: 42px;
+  font-size: 44px;
   font-weight: bold;
   margin: 10px 0;
-  text-shadow: 0 0 15px rgba(212,175,55,0.6);
+  text-shadow: 0 0 20px rgba(212,175,55,0.6);
 }
 
 .subtitle {
@@ -65,14 +65,19 @@ button:hover {
 
 .result {
   margin-top: 40px;
-  font-size: 28px;
-  font-weight: bold;
+  font-size: 24px;
+  animation: fadeIn 0.5s ease;
 }
 
 .status {
   margin-top: 15px;
   font-size: 13px;
   opacity: 0.6;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 </style>
 </head>
@@ -95,7 +100,10 @@ button:hover {
 
 let guests = [];
 
+// Google Sheet ID ของพี่
 const sheetID = "1oDF4vOZ2ZgBPbXgIFSQo1jQpa08nP8S9eVw3duDoNJ0";
+
+// ชื่อแท็บ
 const sheetName = "guests";
 
 const url = "https://opensheet.elk.sh/" + sheetID + "/" + sheetName;
@@ -130,11 +138,13 @@ function searchSeat() {
 
   if (results.length === 1) {
     document.getElementById("result").innerHTML =
-      "TABLE " + results[0].table +
-      "<br>SEAT " + results[0].seat;
+      "<div style='font-size:18px; color:white;'>Please proceed to</div>" +
+      "<div style='font-size:40px; margin:10px 0;'>TABLE " + results[0].table + "</div>" +
+      "<div style='font-size:18px; color:white;'>Your seat number is</div>" +
+      "<div style='font-size:40px; margin-top:10px;'>" + results[0].seat + "</div>";
   }
   else if (results.length > 1) {
-    let list = "<div style='font-size:18px;'>Please select your name:</div><br>";
+    let list = "<div style='font-size:18px; color:white;'>Please select your name</div><br>";
     results.forEach(g => {
       list += g.name + " — TABLE " + g.table +
               " SEAT " + g.seat + "<br>";
@@ -146,6 +156,7 @@ function searchSeat() {
   }
 }
 
+// กด Enter แล้วค้นหา
 document.getElementById("nameInput").addEventListener("keydown", function(e) {
   if (e.key === "Enter") {
     e.preventDefault();
