@@ -18,26 +18,40 @@ body {
 .small-title {
   font-size: 14px;
   letter-spacing: 2px;
-  color: #bfbfbf; /* เทาอ่อน */
+  color: #bfbfbf; /* Welcome to = เทาอ่อน */
 }
 
 .big-title {
   font-size: 44px;
   font-weight: bold;
-  margin: 10px 0;
+  margin: 10px 0 6px;
   text-shadow: 0 0 20px rgba(212,175,55,0.6);
 }
 
 .subtitle {
   font-size: 16px;
-  margin-bottom: 40px;
-  color: #ffffff; /* ขาว */
+  margin-bottom: 28px;
+  color: #ffffff; /* The Dawn of Innovation = ขาว */
+  opacity: 0.95;
+}
+
+.prompt {
+  color: white;
+  margin: 0 0 14px;
+}
+
+.controls {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
 }
 
 input {
   padding: 14px;
-  width: 300px;
-  max-width: 80%;
+  width: 320px;
+  max-width: 85vw;
   border: 1px solid #d4af37;
   background: #111;
   color: #fff;
@@ -45,13 +59,10 @@ input {
   outline: none;
 }
 
-input::placeholder {
-  color: #aaa;
-}
+input::placeholder { color: #aaa; }
 
 button {
   padding: 14px 24px;
-  margin-left: 10px;
   background: #d4af37;
   border: none;
   color: #000;
@@ -59,25 +70,47 @@ button {
   cursor: pointer;
 }
 
-button:hover {
-  background: #f1d37a;
+button:hover { background: #f1d37a; }
+
+.status {
+  margin-top: 14px;
+  font-size: 13px;
+  opacity: 0.6;
 }
 
 .result {
-  margin-top: 40px;
+  margin-top: 22px;
   font-size: 24px;
   animation: fadeIn 0.5s ease;
-}
-
-.status {
-  margin-top: 15px;
-  font-size: 13px;
-  opacity: 0.6;
 }
 
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(8px); }
   to { opacity: 1; transform: translateY(0); }
+}
+
+.map-wrap{
+  margin: 26px auto 0;
+  width: min(900px, 95vw);
+}
+
+.map-box{
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 0 0 1px rgba(212,175,55,.15), 0 12px 40px rgba(0,0,0,.45);
+}
+
+.map-box img{
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.note{
+  margin-top: 14px;
+  font-size: 16px;
+  color: #ffffff;
+  opacity: 0.9;
 }
 </style>
 </head>
@@ -88,21 +121,29 @@ button:hover {
 <div class="big-title">THE INMODE ERA</div>
 <div class="subtitle">The Dawn of Innovation</div>
 
-<p style="color:white;">Please Enter your Registered name.</p>
+<p class="prompt">Please Enter your Registered name.</p>
 
-<input type="text" id="nameInput" placeholder="Type your name">
-<button onclick="searchSeat()">Search</button>
+<div class="controls">
+  <input type="text" id="nameInput" placeholder="Type your name">
+  <button onclick="searchSeat()">Search</button>
+</div>
 
 <div class="status" id="status">Loading guest list...</div>
 <div class="result" id="result"></div>
 
-<script>
+<!-- ✅ แผนผังที่นั่ง -->
+<div class="map-wrap">
+  <div class="map-box">
+    <!-- อัปโหลดรูปเป็น seating-map.jpg -->
+    <img src="seating-map.jpg" alt="Seating Map">
+  </div>
+</div>
 
+<script>
 let guests = [];
 
 const sheetID = "1oDF4vOZ2ZgBPbXgIFSQo1jQpa08nP8S9eVw3duDoNJ0";
 const sheetName = "guests";
-
 const url = "https://opensheet.elk.sh/" + sheetID + "/" + sheetName;
 
 function normalize(str) {
@@ -114,8 +155,8 @@ fetch(url)
   .then(data => {
     guests = data.map(row => ({
       name: normalize(row.name),
-      table: row.table || "",
-      seat: row.seat || ""
+      table: (row.table || "").toString().trim().toUpperCase(),
+      seat: (row.seat || "").toString().trim()
     }));
     document.getElementById("status").innerHTML =
       "Loaded " + guests.length + " guests";
@@ -135,13 +176,13 @@ function searchSeat() {
       "<div style='font-size:18px; color:white;'>Please proceed to</div>" +
       "<div style='font-size:40px; margin:10px 0;'>TABLE " + results[0].table + "</div>" +
       "<div style='font-size:18px; color:white;'>Your seat number is</div>" +
-      "<div style='font-size:40px; margin-top:10px;'>" + results[0].seat + "</div>";
+      "<div style='font-size:40px; margin-top:10px;'>" + results[0].seat + "</div>" +
+      "<div class='note'>Please refer to the seating map below to locate your table.</div>";
   }
   else if (results.length > 1) {
     let list = "<div style='font-size:18px; color:white;'>Please select your name</div><br>";
     results.forEach(g => {
-      list += g.name + " — TABLE " + g.table +
-              " SEAT " + g.seat + "<br>";
+      list += g.name + " — TABLE " + g.table + " SEAT " + g.seat + "<br>";
     });
     document.getElementById("result").innerHTML = list;
   }
@@ -150,13 +191,13 @@ function searchSeat() {
   }
 }
 
+// Enter แล้วค้นหา
 document.getElementById("nameInput").addEventListener("keydown", function(e) {
   if (e.key === "Enter") {
     e.preventDefault();
     searchSeat();
   }
 });
-
 </script>
 
 </body>
