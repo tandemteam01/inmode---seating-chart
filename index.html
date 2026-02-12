@@ -3,37 +3,87 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Find Your Seat</title>
+<title>THE INMODE ERA</title>
 
 <style>
 body {
-  font-family: Arial, sans-serif;
+  margin: 0;
+  font-family: 'Arial', sans-serif;
+  background: radial-gradient(circle at center, #1a1a1a 0%, #000000 100%);
+  color: #d4af37;
   text-align: center;
-  padding: 60px;
+  padding: 60px 20px;
 }
-input {
-  padding: 12px;
-  width: 280px;
-}
-button {
-  padding: 12px 20px;
-  margin-left: 10px;
-}
-.result {
-  margin-top: 30px;
-  font-size: 24px;
-}
-.status {
-  margin-top: 10px;
+
+.small-title {
   font-size: 14px;
+  letter-spacing: 2px;
+  opacity: 0.8;
+}
+
+.big-title {
+  font-size: 42px;
+  font-weight: bold;
+  margin: 10px 0;
+  text-shadow: 0 0 15px rgba(212,175,55,0.6);
+}
+
+.subtitle {
+  font-size: 16px;
+  margin-bottom: 40px;
+  opacity: 0.85;
+}
+
+input {
+  padding: 14px;
+  width: 300px;
+  max-width: 80%;
+  border: 1px solid #d4af37;
+  background: #111;
+  color: #fff;
+  font-size: 16px;
+  outline: none;
+}
+
+input::placeholder {
+  color: #aaa;
+}
+
+button {
+  padding: 14px 24px;
+  margin-left: 10px;
+  background: #d4af37;
+  border: none;
+  color: #000;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+button:hover {
+  background: #f1d37a;
+}
+
+.result {
+  margin-top: 40px;
+  font-size: 28px;
+  font-weight: bold;
+}
+
+.status {
+  margin-top: 15px;
+  font-size: 13px;
+  opacity: 0.6;
 }
 </style>
 </head>
 
 <body>
 
-<h2>Welcome</h2>
-<p>Enter your full name</p>
+<div class="small-title">Welcome to</div>
+<div class="big-title">THE INMODE ERA</div>
+<div class="subtitle">The Dawn of Innovation</div>
+
+<p>Please Enter your Registered name.</p>
 
 <input type="text" id="nameInput" placeholder="Type your name">
 <button onclick="searchSeat()">Search</button>
@@ -45,10 +95,7 @@ button {
 
 let guests = [];
 
-// ✅ Google Sheet ID ใส่ให้แล้ว
 const sheetID = "1oDF4vOZ2ZgBPbXgIFSQo1jQpa08nP8S9eVw3duDoNJ0";
-
-// ✅ ชื่อแท็บถูกต้อง
 const sheetName = "guests";
 
 const url = "https://opensheet.elk.sh/" + sheetID + "/" + sheetName;
@@ -73,7 +120,7 @@ fetch(url)
   })
   .catch(error => {
     document.getElementById("status").innerHTML =
-      "Error loading Google Sheet";
+      "Unable to load guest list.";
     console.log(error);
   });
 
@@ -83,14 +130,14 @@ function searchSeat() {
 
   if (results.length === 1) {
     document.getElementById("result").innerHTML =
-      "Table: <b>" + results[0].table +
-      "</b><br>Seat: <b>" + results[0].seat + "</b>";
+      "TABLE " + results[0].table +
+      "<br>SEAT " + results[0].seat;
   }
   else if (results.length > 1) {
-    let list = "<p>Please select your name:</p>";
+    let list = "<div style='font-size:18px;'>Please select your name:</div><br>";
     results.forEach(g => {
-      list += g.name + " - Table " + g.table +
-              " Seat " + g.seat + "<br>";
+      list += g.name + " — TABLE " + g.table +
+              " SEAT " + g.seat + "<br>";
     });
     document.getElementById("result").innerHTML = list;
   }
@@ -99,7 +146,6 @@ function searchSeat() {
   }
 }
 
-// ✅ กด Enter แล้วค้นหาได้เลย
 document.getElementById("nameInput").addEventListener("keydown", function(e) {
   if (e.key === "Enter") {
     e.preventDefault();
