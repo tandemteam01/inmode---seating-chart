@@ -18,7 +18,7 @@ body {
 .small-title {
   font-size: 14px;
   letter-spacing: 2px;
-  opacity: 0.8;
+  color: #bfbfbf; /* เทาอ่อน */
 }
 
 .big-title {
@@ -31,7 +31,7 @@ body {
 .subtitle {
   font-size: 16px;
   margin-bottom: 40px;
-  opacity: 0.85;
+  color: #ffffff; /* ขาว */
 }
 
 input {
@@ -88,7 +88,7 @@ button:hover {
 <div class="big-title">THE INMODE ERA</div>
 <div class="subtitle">The Dawn of Innovation</div>
 
-<p>Please Enter your Registered name.</p>
+<p style="color:white;">Please Enter your Registered name.</p>
 
 <input type="text" id="nameInput" placeholder="Type your name">
 <button onclick="searchSeat()">Search</button>
@@ -100,19 +100,13 @@ button:hover {
 
 let guests = [];
 
-// Google Sheet ID ของพี่
 const sheetID = "1oDF4vOZ2ZgBPbXgIFSQo1jQpa08nP8S9eVw3duDoNJ0";
-
-// ชื่อแท็บ
 const sheetName = "guests";
 
 const url = "https://opensheet.elk.sh/" + sheetID + "/" + sheetName;
 
 function normalize(str) {
-  return (str || "")
-    .toString()
-    .trim()
-    .toLowerCase();
+  return (str || "").toString().trim().toLowerCase();
 }
 
 fetch(url)
@@ -156,7 +150,6 @@ function searchSeat() {
   }
 }
 
-// กด Enter แล้วค้นหา
 document.getElementById("nameInput").addEventListener("keydown", function(e) {
   if (e.key === "Enter") {
     e.preventDefault();
