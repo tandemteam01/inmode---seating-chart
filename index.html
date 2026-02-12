@@ -1,9 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Find Your Seat</title>
+
+<style>
+body {
+  font-family: Arial, sans-serif;
+  text-align: center;
+  padding: 60px;
+}
+input {
+  padding: 12px;
+  width: 280px;
+}
+button {
+  padding: 12px 20px;
+  margin-left: 10px;
+}
+.result {
+  margin-top: 30px;
+  font-size: 24px;
+}
+.status {
+  margin-top: 10px;
+  font-size: 14px;
+}
+</style>
+</head>
+
+<body>
+
+<h2>Welcome</h2>
+<p>Enter your full name</p>
+
+<input type="text" id="nameInput" placeholder="Type your name">
+<button onclick="searchSeat()">Search</button>
+
+<div class="status" id="status">Loading guest list...</div>
+<div class="result" id="result"></div>
+
 <script>
 
 let guests = [];
 
+// ❗ เปลี่ยนสองบรรทัดนี้ให้ถูก
 const sheetID = "1oDF4vOZ2ZgBPbXgIFSQo1jQpa08nP8S9eVw3duDoNJ0";
-const sheetName = "Sheet1";
+const sheetName = "guests";
 
 const url = "https://opensheet.elk.sh/" + sheetID + "/" + sheetName;
 
@@ -15,9 +59,12 @@ fetch(url)
       table: row.table || "",
       seat: row.seat || ""
     }));
+    document.getElementById("status").innerHTML = 
+      "Loaded " + guests.length + " guests";
   })
   .catch(error => {
-    document.body.innerHTML = "<h2>Error loading Google Sheet</h2>";
+    document.getElementById("status").innerHTML =
+      "Error loading Google Sheet";
     console.log(error);
   });
 
@@ -44,3 +91,6 @@ function searchSeat() {
 }
 
 </script>
+
+</body>
+</html>
