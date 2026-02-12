@@ -3,18 +3,22 @@
 let guests = [];
 
 const sheetID = "1oDF4vOZ2ZgBPbXgIFSQo1jQpa08nP8S9eVw3duDoNJ0";
-const sheetName = "Sheet1";  // เปลี่ยนถ้าชื่อชีตไม่ใช่ Sheet1
+const sheetName = "Sheet1";
 
-const url = `https://opensheet.elk.sh/${sheetID}/${sheetName}`;
+const url = "https://opensheet.elk.sh/" + sheetID + "/" + sheetName;
 
 fetch(url)
-  .then(response => response.json())
+  .then(res => res.json())
   .then(data => {
     guests = data.map(row => ({
-      name: row.name.toLowerCase(),
-      table: row.table,
-      seat: row.seat
+      name: (row.name || "").toLowerCase(),
+      table: row.table || "",
+      seat: row.seat || ""
     }));
+  })
+  .catch(error => {
+    document.body.innerHTML = "<h2>Error loading Google Sheet</h2>";
+    console.log(error);
   });
 
 function searchSeat() {
