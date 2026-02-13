@@ -2,235 +2,138 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>THE INMODE ERA</title>
+<title>INMODE Seating Chart</title>
 
 <style>
 body {
-  margin: 0;
-  font-family: Arial, sans-serif;
-  background: radial-gradient(circle at center, #1a1a1a 0%, #000000 100%);
-  color: #d4af37;
-  text-align: center;
-  padding: 60px 20px;
-}
-
-.small-title {
-  font-size: 14px;
-  letter-spacing: 2px;
-  color: #bfbfbf;
-}
-
-.big-title {
-  font-size: 48px;
-  font-weight: bold;
-  margin: 10px 0 6px;
-  text-shadow: 0 0 25px rgba(212,175,55,0.7);
-}
-
-.subtitle {
-  font-size: 16px;
-  margin-bottom: 30px;
-  color: #ffffff;
-}
-
-.prompt {
-  color: white;
-  margin-bottom: 15px;
-}
-
-.controls {
-  display: flex;
-  justify-content: center;
-  gap: 10px;
-  flex-wrap: wrap;
+  background-color:#000;
+  color:white;
+  text-align:center;
+  font-family:Arial;
 }
 
 input {
-  padding: 14px;
-  width: 320px;
-  max-width: 85vw;
-  border: 1px solid #d4af37;
-  background: #111;
-  color: #fff;
-  font-size: 16px;
+  padding:10px;
+  width:300px;
+  font-size:16px;
 }
 
 button {
-  padding: 14px 24px;
-  background: #d4af37;
-  border: none;
-  color: #000;
-  font-weight: bold;
-  cursor: pointer;
+  padding:10px 20px;
+  font-size:16px;
+  background:#d4af37;
+  border:none;
+  cursor:pointer;
 }
 
-button:hover { background: #f1d37a; }
-
-.status {
-  margin-top: 14px;
-  font-size: 14px;
-  opacity: 0.75;
-  color: #ffffff;
+.gold {
+  color:#d4af37;
 }
 
-.result {
-  margin-top: 40px;
-  font-size: 26px;
-  animation: fadeIn 0.4s ease;
-}
-
-.welcome-name {
-  font-size: 22px;
-  color: #ffffff;
-}
-
-.welcome-era {
-  font-size: 20px;
-  color: #d4af37;
-  margin-top: 5px;
-}
-
-.proceed-text {
-  font-size: 18px;
-  color: #ffffff;
-  margin-top: 25px;
-}
-
-.note {
-  margin-top: 20px;
-  font-size: 16px;
-  color: #ffffff;
-  opacity: 0.85;
-}
-
-.map-container {
-  margin-top: 45px;
-  display: none;
-  justify-content: center;
-  animation: fadeIn 0.4s ease;
-}
-
-.map-container.show {
-  display: flex;
-}
-
-.map-container img {
-  width: 95%;
-  max-width: 1100px;
-  height: auto;
-  display: block;
-}
-
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
+#mapSection {
+  display:none;
+  margin-top:40px;
 }
 </style>
 </head>
 
 <body>
 
-<div class="small-title">Welcome to</div>
-<div class="big-title">THE INMODE ERA</div>
-<div class="subtitle">The Dawn of Innovation</div>
+<h4 style="color:#aaa;">Welcome to</h4>
+<h1 class="gold" style="font-size:50px;">THE INMODE ERA</h1>
+<h3>The Dawn of Innovation</h3>
 
-<p class="prompt">Please Enter your Registered name.</p>
+<p>Please Enter your Registered name.</p>
 
-<div class="controls">
-  <input type="text" id="nameInput" placeholder="Type your name">
-  <button onclick="searchSeat()">Search</button>
-</div>
+<input type="text" id="nameInput" placeholder="Type your name here">
+<button onclick="searchSeat()">Search</button>
 
-<div class="status" id="status">
-  Your personalized seating information awaits.
-</div>
+<p id="status">Your personalized seating information awaits.</p>
+<div id="result"></div>
 
-<div class="result" id="result"></div>
-
-<div class="map-container" id="mapContainer">
-  <img src="seating-map.png" alt="Seating Map">
+<div id="mapSection">
+  <p style="margin-top:30px;">
+    Please refer to the seating map below to locate your table.
+  </p>
+  <img src="seating-map.png" width="900">
 </div>
 
 <script>
+
+const SHEET_ID = "1oDF4vOZ2ZgBPbXgIFSQo1jQpa08nP8S9eVw3duDoNJ0";
+const SHEET_NAME = "guests";
+const url = `https://opensheet.elk.sh/${SHEET_ID}/${SHEET_NAME}`;
+
 let guests = [];
-
-const sheetID = "1oDF4vOZ2ZgBPbXgIFSQo1jQpa08nP8S9eVw3duDoNJ0";
-const sheetName = "guests";
-const url = "https://opensheet.elk.sh/" + sheetID + "/" + sheetName;
-
-function normalize(str) {
-  return (str || "").toString().trim().toLowerCase();
-}
 
 fetch(url)
   .then(res => res.json())
   .then(data => {
-    guests = data.map(row => ({
-      displayName: (row.name || "").toString().trim(),
-      nameNormalized: normalize(row.name),
-      table: (row.table || "").toString().trim().toUpperCase(),
-      seat: (row.seat || "").toString().trim()
-    }));
+    guests = data;
   });
 
-function hideMap() {
-  document.getElementById("mapContainer").classList.remove("show");
-}
-
-function showMap() {
-  document.getElementById("mapContainer").classList.add("show");
-  document.getElementById("mapContainer").scrollIntoView({ behavior: "smooth", block: "start" });
-}
-
-function escapeHtml(str){
-  return (str || "")
-    .replaceAll("&", "&amp;")
-    .replaceAll("<", "&lt;")
-    .replaceAll(">", "&gt;")
-    .replaceAll('"', "&quot;")
-    .replaceAll("'", "&#039;");
-}
+document.getElementById("nameInput")
+  .addEventListener("keyup", function(event) {
+    if (event.key === "Enter") {
+      searchSeat();
+    }
+  });
 
 function searchSeat() {
-  let q = normalize(document.getElementById("nameInput").value);
-  hideMap();
 
-  let results = guests.filter(g => g.nameNormalized.includes(q));
+  const name = document
+    .getElementById("nameInput")
+    .value
+    .toLowerCase()
+    .trim();
 
-  if (results.length === 1) {
-    const g = results[0];
-    const safeName = escapeHtml(g.displayName);
+  const results = guests.filter(g =>
+    g.name.toLowerCase().includes(name)
+  );
 
-    document.getElementById("result").innerHTML =
-      "<div class='welcome-name'>Welcome, " + safeName + "</div>" +
-      "<div class='welcome-era'>to THE INMODE ERA</div>" +
-      "<div class='proceed-text'>Please proceed to</div>" +
-      "<div style='font-size:44px; margin:10px 0;'>TABLE " + g.table + "</div>" +
-      "<div style='font-size:18px; color:white;'>Your seat number is</div>" +
-      "<div style='font-size:44px; margin-top:10px;'>" + g.seat + "</div>" +
-      "<div class='note'>Please refer to the seating map below to locate your table.</div>";
+  const resultDiv = document.getElementById("result");
+  const map = document.getElementById("mapSection");
 
-    showMap();
+  resultDiv.innerHTML = "";
+  map.style.display = "none";
 
-  } else if (results.length > 1) {
-    document.getElementById("result").innerHTML =
-      "<div style='color:white;'>Multiple results found. Please type your full name.</div>";
-  } else {
-    document.getElementById("result").innerHTML = "Name not found";
+  if (results.length === 0) {
+    resultDiv.innerHTML = "Name not found.";
+  }
+
+  else if (results.length === 1) {
+
+    const guest = results[0];
+
+    resultDiv.innerHTML = `
+      <h2>Welcome, ${guest.name}</h2>
+      <p>to <span class="gold">THE INMODE ERA</span></p>
+      <br>
+      <h3>Please proceed to</h3>
+      <h1 class="gold" style="font-size:60px;">TABLE ${guest.table}</h1>
+      <h3>Your seat number is</h3>
+      <h1 class="gold" style="font-size:70px;">${guest.seat}</h1>
+    `;
+
+    map.style.display = "block";
+  }
+
+  else {
+
+    let listHTML = `<h3>Multiple matches found:</h3><br>`;
+
+    results.forEach(g => {
+      listHTML += `
+        <p style="font-size:20px;">
+          ${g.name} — Table ${g.table} Seat ${g.seat}
+        </p>
+      `;
+    });
+
+    resultDiv.innerHTML = listHTML;
   }
 }
 
-document.getElementById("nameInput").addEventListener("keydown", function(e) {
-  if (e.key === "Enter") {
-    e.preventDefault();
-    searchSeat();
-  }
-});
-
-document.getElementById("nameInput").addEventListener("input", function() {
-  hideMap();
-});
 </script>
 
 </body>
