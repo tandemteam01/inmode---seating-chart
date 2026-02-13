@@ -69,8 +69,9 @@ button:hover { background: #f1d37a; }
 
 .status {
   margin-top: 14px;
-  font-size: 13px;
-  opacity: 0.6;
+  font-size: 14px;
+  opacity: 0.75;
+  color: #ffffff;
 }
 
 .result {
@@ -109,7 +110,10 @@ button:hover { background: #f1d37a; }
   justify-content: center;
   animation: fadeIn 0.4s ease;
 }
-.map-container.show { display: flex; }
+
+.map-container.show {
+  display: flex;
+}
 
 .map-container img {
   width: 95%;
@@ -138,7 +142,10 @@ button:hover { background: #f1d37a; }
   <button onclick="searchSeat()">Search</button>
 </div>
 
-<div class="status" id="status">Loading guest list...</div>
+<div class="status" id="status">
+  Your personalized seating information awaits.
+</div>
+
 <div class="result" id="result"></div>
 
 <div class="map-container" id="mapContainer">
@@ -165,8 +172,6 @@ fetch(url)
       table: (row.table || "").toString().trim().toUpperCase(),
       seat: (row.seat || "").toString().trim()
     }));
-    document.getElementById("status").innerHTML =
-      "Loaded " + guests.length + " guests";
   });
 
 function hideMap() {
