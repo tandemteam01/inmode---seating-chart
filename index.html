@@ -2,137 +2,148 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>INMODE Seating Chart</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>THE INMODE ERA</title>
 
 <style>
-body {
-  background-color:#000;
-  color:white;
+body{
+  margin:0;
+  font-family:Arial, sans-serif;
+  background:radial-gradient(circle,#1a1a1a,#000);
+  color:#d4af37;
   text-align:center;
-  font-family:Arial;
+  padding:60px 20px;
 }
-
-input {
-  padding:10px;
-  width:300px;
+.small{font-size:14px;color:#aaa;letter-spacing:2px;}
+.big{font-size:48px;font-weight:bold;text-shadow:0 0 20px #d4af37;}
+.subtitle{color:#fff;margin-bottom:30px;}
+input{
+  padding:14px;
+  width:320px;
+  max-width:85vw;
+  background:#111;
+  border:1px solid #d4af37;
+  color:#fff;
   font-size:16px;
 }
-
-button {
-  padding:10px 20px;
-  font-size:16px;
+button{
+  padding:14px 24px;
   background:#d4af37;
   border:none;
+  font-weight:bold;
   cursor:pointer;
 }
-
-.gold {
-  color:#d4af37;
-}
-
-#mapSection {
-  display:none;
-  margin-top:40px;
-}
+.status{margin-top:15px;color:#fff;opacity:.7;}
+.result{margin-top:40px;}
+.map{display:none;margin-top:40px;}
+.map img{width:95%;max-width:1100px;}
 </style>
 </head>
 
 <body>
 
-<h4 style="color:#aaa;">Welcome to</h4>
-<h1 class="gold" style="font-size:50px;">THE INMODE ERA</h1>
-<h3>The Dawn of Innovation</h3>
+<div class="small">Welcome to</div>
+<div class="big">THE INMODE ERA</div>
+<div class="subtitle">The Dawn of Innovation</div>
 
-<p>Please Enter your Registered name.</p>
+<p style="color:white;">Please Enter your Registered name.</p>
 
-<input type="text" id="nameInput" placeholder="Type your name here">
+<input type="text" id="nameInput" placeholder="Type your name">
 <button onclick="searchSeat()">Search</button>
 
-<p id="status">Your personalized seating information awaits.</p>
-<div id="result"></div>
+<div class="status" id="status">
+Your personalized seating information awaits.
+</div>
 
-<div id="mapSection">
-  <p style="margin-top:30px;">
-    Please refer to the seating map below to locate your table.
-  </p>
-  <img src="seating-map.png" width="900">
+<div class="result" id="result"></div>
+
+<div class="map" id="map">
+<p style="color:white;">
+Please refer to the seating map below to locate your table.
+</p>
+<img src="seating-map.png">
 </div>
 
 <script>
 
 const SHEET_ID = "1oDF4vOZ2ZgBPbXgIFSQo1jQpa08nP8S9eVw3duDoNJ0";
 const SHEET_NAME = "guests";
-const url = `https://opensheet.elk.sh/${SHEET_ID}/${SHEET_NAME}`;
+const URL = `https://opensheet.elk.sh/${SHEET_ID}/${SHEET_NAME}`;
 
 let guests = [];
 
-fetch(url)
+fetch(URL)
   .then(res => res.json())
   .then(data => {
     guests = data;
   });
 
-document.getElementById("nameInput")
-  .addEventListener("keyup", function(event) {
-    if (event.key === "Enter") {
-      searchSeat();
-    }
-  });
+function normalize(str){
+  return (str || "").toString().trim().toLowerCase();
+}
 
-function searchSeat() {
+function searchSeat(){
 
-  const name = document
-    .getElementById("nameInput")
-    .value
-    .toLowerCase()
-    .trim();
-
-  const results = guests.filter(g =>
-    g.name.toLowerCase().includes(name)
-  );
-
+  const input = normalize(document.getElementById("nameInput").value);
   const resultDiv = document.getElementById("result");
-  const map = document.getElementById("mapSection");
+  const mapDiv = document.getElementById("map");
 
   resultDiv.innerHTML = "";
-  map.style.display = "none";
+  mapDiv.style.display = "none";
 
-  if (results.length === 0) {
-    resultDiv.innerHTML = "Name not found.";
+  // ✅ เริ่มค้นที่ 2 ตัวอักษร
+  if(input.length < 2){
+    resultDiv.innerHTML = "<p style='color:white;'>Please type at least 2 characters.</p>";
+    return;
   }
 
-  else if (results.length === 1) {
+  const results = guests.filter(g =>
+    normalize(g.name).includes(input)
+  );
 
-    const guest = results[0];
+  if(results.length === 0){
+    resultDiv.innerHTML = "<p style='color:white;'>Name not found.</p>";
+    return;
+  }
+
+  if(results.length === 1){
+
+    const g = results[0];
 
     resultDiv.innerHTML = `
-      <h2>Welcome, ${guest.name}</h2>
-      <p>to <span class="gold">THE INMODE ERA</span></p>
-      <br>
-      <h3>Please proceed to</h3>
-      <h1 class="gold" style="font-size:60px;">TABLE ${guest.table}</h1>
-      <h3>Your seat number is</h3>
-      <h1 class="gold" style="font-size:70px;">${guest.seat}</h1>
+      <h2 style="color:white;">Welcome, ${g.name}</h2>
+      <div style="margin-bottom:20px;">to <span style="color:#d4af37;">THE INMODE ERA</span></div>
+      <div style="color:white;">Please proceed to</div>
+      <div style="font-size:44px;">TABLE ${g.table}</div>
+      <div style="color:white;">Your seat number is</div>
+      <div style="font-size:44px;">${g.seat}</div>
     `;
 
-    map.style.display = "block";
+    mapDiv.style.display = "block";
   }
 
-  else {
+  else{
 
-    let listHTML = `<h3>Multiple matches found:</h3><br>`;
+    let html = "<h3 style='color:white;'>Multiple results found:</h3>";
 
-    results.forEach(g => {
-      listHTML += `
-        <p style="font-size:20px;">
-          ${g.name} — Table ${g.table} Seat ${g.seat}
-        </p>
-      `;
+    results.slice(0,30).forEach(g=>{
+      html += `
+      <div style="color:white;font-size:18px;margin:6px 0;">
+      ${g.name} — Table ${g.table} Seat ${g.seat}
+      </div>`;
     });
 
-    resultDiv.innerHTML = listHTML;
+    resultDiv.innerHTML = html;
   }
 }
+
+// Enter key
+document.getElementById("nameInput")
+.addEventListener("keydown", function(e){
+  if(e.key === "Enter"){
+    searchSeat();
+  }
+});
 
 </script>
 
